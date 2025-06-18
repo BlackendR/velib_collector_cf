@@ -4,10 +4,16 @@ from unittest.mock import patch, MagicMock
 from src.api_client import fetch_station_information, fetch_station_status
 from src.data_transformer import transform_station_information, transform_station_status
 from src.bq_handler import test_bigquery_connection, upsert_stations_information, upsert_stations_status
+from src.config import set_bigquery_client
 from .fixtures import mock_station_info, mock_station_status, mock_bigquery_client
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+@pytest.fixture(autouse=True)
+def setup_mocks():
+    """Configure les mocks pour tous les tests"""
+    set_bigquery_client(mock_bigquery_client())
 
 @patch('src.api_client.requests.get')
 def test_api(mock_get):
@@ -40,19 +46,15 @@ def test_transformation(mock_get):
     assert len(transformed_info) > 0, "Aucune donnée transformée"
     logger.info("✅ Transformation OK")
 
-@patch('src.bq_handler.client')
-def test_bigquery(mock_client, mock_bigquery_client):
+def test_bigquery():
     """Test de la connexion BigQuery"""
     logger.info("🧪 Test de la connexion BigQuery...")
-    mock_client.return_value = mock_bigquery_client
     assert test_bigquery_connection(), "La connexion à BigQuery a échoué"
     logger.info("✅ Connexion BigQuery OK")
 
-@patch('src.bq_handler.client')
-def test_upsert(mock_client, mock_bigquery_client, mock_station_info, mock_station_status):
+def test_upsert(mock_station_info, mock_station_status):
     """Test de l'upsert des données"""
     logger.info("🧪 Test de l'upsert des données...")
-    mock_client.return_value = mock_bigquery_client
     
     transformed_info = transform_station_information(mock_station_info)
     transformed_status = transform_station_status(mock_station_status)

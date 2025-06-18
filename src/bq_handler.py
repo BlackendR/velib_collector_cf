@@ -1,5 +1,5 @@
 from google.cloud import bigquery
-from .config import PROJECT_ID, DATASET_ID, STATION_INFORMATION_TABLE, STATION_STATUS_TABLE, client
+from .config import PROJECT_ID, DATASET_ID, STATION_INFORMATION_TABLE, STATION_STATUS_TABLE, get_bigquery_client
 from datetime import datetime
 import logging
 
@@ -12,6 +12,7 @@ def upsert_stations_information(information_data):
     """
     table_id = f"{PROJECT_ID}.{DATASET_ID}.{STATION_INFORMATION_TABLE}"
     current_time = datetime.now()
+    client = get_bigquery_client()
 
     try:
         temp_table_id = f"{table_id}_temp_{int(current_time.timestamp())}"
@@ -64,6 +65,7 @@ def upsert_stations_status(status_data):
     """
     table_id = f"{PROJECT_ID}.{DATASET_ID}.{STATION_STATUS_TABLE}"
     current_time = datetime.now()
+    client = get_bigquery_client()
 
     try:
         temp_table_id = f"{table_id}_temp_{int(current_time.timestamp())}"
@@ -128,6 +130,7 @@ def test_bigquery_connection():
         bool: True si la connexion fonctionne
     """
     try:
+        client = get_bigquery_client()
         datasets = list(client.list_datasets())
         logger.info(f'Datasets disponibles: {[d.dataset_id for d in datasets]}')
 
