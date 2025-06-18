@@ -12,25 +12,22 @@ env_path = Path(__file__).parent.parent / '.env'
 load_dotenv(dotenv_path=env_path)
 
 # Google Cloud
-PROJECT_ID = os.getenv('GOOGLE_CLOUD_PROJECT')
-DATASET_ID = os.getenv('BIGQUERY_DATASET')
-LOCATION = os.getenv('BIGQUERY_LOCATION')
+PROJECT_ID = os.getenv('GOOGLE_CLOUD_PROJECT', 'test-project')
+DATASET_ID = os.getenv('BIGQUERY_DATASET', 'test_dataset')
+LOCATION = os.getenv('BIGQUERY_LOCATION', 'europe-west1')
 CREDENTIALS = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
 
 logger.info(f"PROJECT_ID: {PROJECT_ID}")
 logger.info(f"DATASET_ID: {DATASET_ID}")
 logger.info(f"CREDENTIALS: {CREDENTIALS}")
 
-if not PROJECT_ID:
-    raise ValueError("GOOGLE_CLOUD_PROJECT n'est pas défini dans le fichier .env")
-
 # API URLs
-STATION_INFORMATION_URL = os.getenv('VELIB_STATION_INFORMATION_URL')
-STATION_STATUS_URL = os.getenv('VELIB_STATION_STATUS_URL')
+STATION_INFORMATION_URL = os.getenv('VELIB_STATION_INFORMATION_URL', 'https://api-test.com/stations/information')
+STATION_STATUS_URL = os.getenv('VELIB_STATION_STATUS_URL', 'https://api-test.com/stations/status')
 
 # BigQuery Tables
-STATION_INFORMATION_TABLE = os.getenv('STATIONS_INFO_TABLE_NAME')
-STATION_STATUS_TABLE = os.getenv('STATIONS_STATUS_TABLE_NAME')
+STATION_INFORMATION_TABLE = os.getenv('STATIONS_INFO_TABLE_NAME', 'stations_info')
+STATION_STATUS_TABLE = os.getenv('STATIONS_STATUS_TABLE_NAME', 'stations_status')
 
 # API Config
 REQUEST_TIMEOUT = 10
